@@ -1,6 +1,6 @@
 const $ = (s) => document.querySelector(s);
 const views = { setup: $('#setupView'), interview: $('#interviewView'), result: $('#resultView') };
-const state = { config: {}, questions: [], index: 0, history: [], seconds: 0, timer: null, stream: null, recognition: null, speaking: true, recording: false, pdfs: [], questionsPdfs: [], preAnalysis: null };
+const state = { config: {}, questions: [], index: 0, history: [], seconds: 0, timer: null, stream: null, recognition: null, speaking: true, recording: false, pdfs: [], questionsPdfs: [], preAnalysis: null, currentQuestion: '' };
 const targetPresets = {
   company: { name: '기업', organization: '지원 회사', organizationPlaceholder: '예: 카카오', role: '지원 직무', rolePlaceholder: '예: 프로덕트 디자이너', level: '경력 수준', levels: ['신입', '1~3년', '4~7년', '8년 이상'], context: '지원 내용 · 채용 공고 · 자기소개 요약', contextPlaceholder: '공고의 주요 요건, 지원 동기, 핵심 경험을 붙여 넣어 주세요.' },
   graduate: { name: '대학원', organization: '지원 대학원', organizationPlaceholder: '예: 서울대학교', role: '지원 학과 · 연구 분야', rolePlaceholder: '예: 컴퓨터공학과 · HCI', level: '지원 과정', levels: ['석사', '박사', '석박사 통합'], context: '연구계획 · 학업계획 · 자기소개', contextPlaceholder: '연구 관심 분야, 지원 동기, 연구 경험과 학업 계획을 입력해 주세요.' },
@@ -107,8 +107,10 @@ function renderQuestion() {
   while (state.index < state.questions.length && isQuestionHeading(state.questions[state.index])) state.index++;
   const question = normalizeQuestion(state.questions[state.index]) || '먼저 간단히 자기소개를 해주시겠어요?';
   state.questions[state.index] = question;
+  state.currentQuestion = question;
   $('#questionNumber').textContent = `QUESTION ${String(state.index + 1).padStart(2, '0')}`;
-  $('#questionText').textContent = question; state.recognition?.resetTranscript(); $('#transcript').value = ''; updateSubmit(); setTimeout(() => speak(question), 350);
+  $('#questionText').textContent = '질문은 음성으로 들려드립니다.'; $('#questionText').classList.add('question-hidden');
+  $('#revealQuestion').classList.remove('hidden'); state.recognition?.resetTranscript(); $('#transcript').value = ''; updateSubmit(); setTimeout(() => speak(question), 350);
 }
 
 function updateSubmit() { $('#submitAnswer').disabled = $('#transcript').value.trim().length < 2; }
@@ -144,6 +146,7 @@ $('#setupForm').addEventListener('submit', async e => {
 });
 
 $('#recordButton').addEventListener('click', () => { if (!state.recognition) return toast('이 브라우저는 음성 인식을 지원하지 않아요. 직접 입력해주세요.'); state.recording ? state.recognition.stop() : state.recognition.start(); });
+$('#revealQuestion').addEventListener('click', () => { $('#questionText').textContent = state.currentQuestion; $('#questionText').classList.remove('question-hidden'); $('#revealQuestion').classList.add('hidden'); });
 $('#transcript').addEventListener('input', updateSubmit);
 $('#submitAnswer').addEventListener('click', async () => {
   if (state.recording) state.recognition.stop(); const answer = $('#transcript').value.trim(); if (!answer) return;

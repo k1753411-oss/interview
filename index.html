@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="enhancements.css" />
   <link rel="stylesheet" href="print.css" media="print" />
+  <link rel="stylesheet" href="question-mode.css" />
 </head>
 <body>
   <header class="topbar">
@@ -93,7 +94,10 @@
       </div>
       <div class="dialogue-card">
         <div class="question-index"><span id="questionNumber">QUESTION 01</span><i></i></div>
-        <h2 id="questionText">반갑습니다. 먼저 간단히 자기소개를 해주시겠어요?</h2>
+        <div class="question-prompt">
+          <h2 id="questionText" class="question-hidden">질문은 음성으로 들려드립니다.</h2>
+          <button id="revealQuestion" class="reveal-question" type="button"><span>질문 확인</span><b>＋</b></button>
+        </div>
         <div class="answer-area">
           <button id="recordButton" class="record-button"><span class="mic">●</span><span class="record-copy"><b>답변 시작</b><small>버튼을 누르고 말해주세요</small></span></button>
           <div class="transcript-wrap"><textarea id="transcript" placeholder="음성으로 답하거나 여기에 직접 입력할 수 있어요."></textarea><span id="listeningBadge" class="listening hidden">듣는 중</span></div>
