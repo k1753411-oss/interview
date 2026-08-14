@@ -1,0 +1,19 @@
+@page{size:A4;margin:14mm}
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body{background:#fff!important;color:#14201d!important}
+  .topbar,.setup-shell,.interview-view,.result-actions,.toast{display:none!important}
+  .result-view{display:block!important;max-width:none!important;margin:0!important;padding:0!important}
+  .result-heading{margin-bottom:8mm}
+  .result-heading .eyebrow{font-size:8pt!important}
+  .result-heading h1{font-size:28pt!important;line-height:1.08!important;margin:4mm 0!important}
+  .result-heading p{font-size:10pt!important}
+  .score-card{margin:0 0 8mm!important;padding:8mm!important;break-inside:avoid;page-break-inside:avoid}
+  .score-ring{width:30mm!important;height:30mm!important}
+  .score-ring strong{font-size:26pt!important}
+  .feedback-list{display:block!important}
+  .feedback-item{margin:0 0 5mm!important;padding:6mm!important;border:1px solid #d8ddd9!important;border-left:3px solid #e1673d!important;break-inside:avoid;page-break-inside:avoid;box-shadow:none!important}
+  .feedback-item h3{font-size:11pt!important}
+  .feedback-item p,.feedback-item blockquote{font-size:9pt!important;line-height:1.55!important}
+  .feedback-item blockquote{margin-top:4mm!important;padding:4mm!important}
+}

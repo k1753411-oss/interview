@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="enhancements.css" />
+  <link rel="stylesheet" href="print.css" media="print" />
 </head>
 <body>
   <header class="topbar">
@@ -105,7 +106,7 @@
       <div class="result-heading"><p class="eyebrow">INTERVIEW REPORT</p><h1>오늘의 면접,<br><em>여기까지 잘 해냈어요.</em></h1><p id="resultSubtitle"></p></div>
       <div class="score-card"><div class="score-ring"><strong id="totalScore">0</strong><span>/ 100</span></div><div><span>OVERALL SCORE</span><h2 id="scoreVerdict">분석 완료</h2><p id="scoreSummary"></p></div></div>
       <div id="feedbackList" class="feedback-list"></div>
-      <div class="result-actions"><button id="restartButton" class="primary-button">새 면접 시작하기 <b>→</b></button><button id="copyReport" class="ghost-button">리포트 복사</button></div>
+      <div class="result-actions"><button id="restartButton" class="primary-button">새 면접 시작하기 <b>→</b></button><button id="downloadPdf" class="ghost-button">PDF로 저장</button><button id="copyReport" class="ghost-button">리포트 복사</button></div>
     </section>
   </main>
   <div id="toast" class="toast"></div>

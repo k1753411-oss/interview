@@ -172,6 +172,15 @@ $('#finishButton').addEventListener('click', finishInterview);
 $('#cameraToggle').addEventListener('click', () => { const track = state.stream?.getVideoTracks()[0]; if (!track) return; track.enabled = !track.enabled; $('#cameraToggle').textContent = track.enabled ? '◉' : '×'; });
 $('#soundToggle').addEventListener('click', () => { state.speaking = !state.speaking; if (!state.speaking) speechSynthesis.cancel(); $('#soundToggle').style.opacity = state.speaking ? '1' : '.35'; toast(state.speaking ? '질문 음성을 켰어요.' : '질문 음성을 껐어요.'); });
 $('#restartButton').addEventListener('click', () => location.reload());
+$('#downloadPdf').addEventListener('click', () => {
+  const previousTitle = document.title;
+  const safeCompany = state.config.company || '면접';
+  const date = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()).replace(/\. /g, '-').replace('.', '');
+  document.title = `${safeCompany}_${state.config.role || '면접'}_리포트_${date}`;
+  document.body.classList.add('printing-report');
+  window.print();
+  setTimeout(() => { document.body.classList.remove('printing-report'); document.title = previousTitle; }, 500);
+});
 $('#copyReport').addEventListener('click', async () => { const report = state.history.map((h,i)=>`${i+1}. ${h.question}\n답변: ${h.answer}\n점수: ${h.score}\n피드백: ${h.feedback}\n개선 답변: ${h.improvedAnswer}`).join('\n\n'); await navigator.clipboard.writeText(report); toast('면접 리포트를 복사했어요.'); });
 $('#targetType').addEventListener('change', updateTargetFields);
 $('#applicationPdf').addEventListener('change', e => { addPdfFiles(e.target.files, 'application'); e.target.value = ''; });
