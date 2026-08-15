@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="enhancements.css" />
   <link rel="stylesheet" href="print.css" media="print" />
   <link rel="stylesheet" href="question-mode.css" />
+  <link rel="stylesheet" href="multi-select.css" />
 </head>
 <body>
   <header class="topbar">
@@ -38,7 +39,7 @@
         </div>
         <div class="field-row three">
           <label><span>면접 시간 <small>분 단위</small></span><div class="number-input"><input id="duration" type="number" value="20" min="1" max="180" inputmode="numeric" required><b>분</b></div></label>
-          <label><span>면접 종류</span><select id="interviewType"><option>직무 면접</option><option>인성 면접</option><option>임원 면접</option><option>기술 면접</option><option>케이스 면접</option></select></label>
+          <div class="selector-field"><span>면접 종류 <small>복수 선택 가능</small></span><div id="interviewTypes" class="interview-types" role="group" aria-label="면접 종류"></div></div>
           <label><span>진행 형식</span><select id="format"><option>일대일</option><option>다대일</option><option>압박 면접</option><option>발표 면접</option></select></label>
         </div>
         <div class="field-row">
@@ -110,7 +111,7 @@
       <div class="result-heading"><p class="eyebrow">INTERVIEW REPORT</p><h1>오늘의 면접,<br><em>여기까지 잘 해냈어요.</em></h1><p id="resultSubtitle"></p></div>
       <div class="score-card"><div class="score-ring"><strong id="totalScore">0</strong><span>/ 100</span></div><div><span>OVERALL SCORE</span><h2 id="scoreVerdict">분석 완료</h2><p id="scoreSummary"></p></div></div>
       <div id="feedbackList" class="feedback-list"></div>
-      <div class="result-actions"><button id="restartButton" class="primary-button">새 면접 시작하기 <b>→</b></button><button id="downloadPdf" class="ghost-button">PDF로 저장</button><button id="copyReport" class="ghost-button">리포트 복사</button></div>
+      <div class="result-actions"><button id="restartButton" class="primary-button">같은 조건으로 다시 면접 <b>→</b></button><button id="editSetupButton" class="ghost-button">정보 다시 입력</button><button id="downloadPdf" class="ghost-button">PDF로 저장</button><button id="copyReport" class="ghost-button">리포트 복사</button></div>
     </section>
   </main>
   <div id="toast" class="toast"></div>

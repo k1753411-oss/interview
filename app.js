@@ -1,12 +1,12 @@
 const $ = (s) => document.querySelector(s);
 const views = { setup: $('#setupView'), interview: $('#interviewView'), result: $('#resultView') };
-const state = { config: {}, questions: [], index: 0, history: [], seconds: 0, timer: null, stream: null, recognition: null, speaking: true, recording: false, pdfs: [], questionsPdfs: [], preAnalysis: null, currentQuestion: '' };
+const state = { config: {}, questions: [], questionBank: [], index: 0, history: [], seconds: 0, timer: null, stream: null, recognition: null, speaking: true, recording: false, pdfs: [], questionsPdfs: [], preAnalysis: null, currentQuestion: '' };
 const targetPresets = {
-  company: { name: '기업', organization: '지원 회사', organizationPlaceholder: '예: 카카오', role: '지원 직무', rolePlaceholder: '예: 프로덕트 디자이너', level: '경력 수준', levels: ['신입', '1~3년', '4~7년', '8년 이상'], context: '지원 내용 · 채용 공고 · 자기소개 요약', contextPlaceholder: '공고의 주요 요건, 지원 동기, 핵심 경험을 붙여 넣어 주세요.' },
-  graduate: { name: '대학원', organization: '지원 대학원', organizationPlaceholder: '예: 서울대학교', role: '지원 학과 · 연구 분야', rolePlaceholder: '예: 컴퓨터공학과 · HCI', level: '지원 과정', levels: ['석사', '박사', '석박사 통합'], context: '연구계획 · 학업계획 · 자기소개', contextPlaceholder: '연구 관심 분야, 지원 동기, 연구 경험과 학업 계획을 입력해 주세요.' },
-  club: { name: '동아리 · 학회', organization: '단체명', organizationPlaceholder: '예: 멋쟁이사자처럼', role: '지원 파트 · 활동 분야', rolePlaceholder: '예: 기획 · 개발', level: '지원 구분', levels: ['신규 지원', '운영진', '회장단'], context: '지원서 · 활동 경험 · 지원 동기', contextPlaceholder: '지원 동기, 관련 경험, 활동 목표를 입력해 주세요.' },
-  public: { name: '공공기관', organization: '지원 기관', organizationPlaceholder: '예: 한국관광공사', role: '지원 직무', rolePlaceholder: '예: 일반행정', level: '지원 구분', levels: ['신입', '경력', '인턴'], context: '지원 내용 · 직무기술서 · 자기소개', contextPlaceholder: '직무기술서의 주요 요건과 자기소개서 내용을 입력해 주세요.' },
-  other: { name: '기타', organization: '기관 · 모임명', organizationPlaceholder: '면접을 진행하는 곳', role: '지원 분야', rolePlaceholder: '지원하는 역할이나 분야', level: '지원 단계', levels: ['신규 지원', '경험자', '기타'], context: '지원 내용 · 관련 경험 · 자기소개', contextPlaceholder: '면접관이 알아야 할 지원 내용을 입력해 주세요.' }
+  company: { name: '기업', organization: '지원 회사', organizationPlaceholder: '예: 카카오', role: '지원 직무', rolePlaceholder: '예: 프로덕트 디자이너', level: '경력 수준', levels: ['신입', '1~3년', '4~7년', '8년 이상'], interviewTypes: ['직무 면접', '인성 면접', '임원 면접', '기술 면접', '케이스 면접', '압박 면접'], context: '지원 내용 · 채용 공고 · 자기소개 요약', contextPlaceholder: '공고의 주요 요건, 지원 동기, 핵심 경험을 붙여 넣어 주세요.' },
+  graduate: { name: '대학원', organization: '지원 대학원', organizationPlaceholder: '예: 서울대학교', role: '지원 학과 · 연구 분야', rolePlaceholder: '예: 컴퓨터공학과 · HCI', level: '지원 과정', levels: ['석사', '박사', '석박사 통합'], interviewTypes: ['전공 면접', '인성 면접', '압박 면접', '연구계획 면접', '영어 면접', '교수 면접'], context: '연구계획 · 학업계획 · 자기소개', contextPlaceholder: '연구 관심 분야, 지원 동기, 연구 경험과 학업 계획을 입력해 주세요.' },
+  club: { name: '동아리 · 학회', organization: '단체명', organizationPlaceholder: '예: 멋쟁이사자처럼', role: '지원 파트 · 활동 분야', rolePlaceholder: '예: 기획 · 개발', level: '지원 구분', levels: ['신규 지원', '운영진', '회장단'], interviewTypes: ['인성 면접', '역량 면접', '활동계획 면접', '압박 면접'], context: '지원서 · 활동 경험 · 지원 동기', contextPlaceholder: '지원 동기, 관련 경험, 활동 목표를 입력해 주세요.' },
+  public: { name: '공공기관', organization: '지원 기관', organizationPlaceholder: '예: 한국관광공사', role: '지원 직무', rolePlaceholder: '예: 일반행정', level: '지원 구분', levels: ['신입', '경력', '인턴'], interviewTypes: ['직무 면접', '인성 면접', 'NCS 면접', '토론 면접', 'PT 면접', '압박 면접'], context: '지원 내용 · 직무기술서 · 자기소개', contextPlaceholder: '직무기술서의 주요 요건과 자기소개서 내용을 입력해 주세요.' },
+  other: { name: '기타', organization: '기관 · 모임명', organizationPlaceholder: '면접을 진행하는 곳', role: '지원 분야', rolePlaceholder: '지원하는 역할이나 분야', level: '지원 단계', levels: ['신규 지원', '경험자', '기타'], interviewTypes: ['인성 면접', '역량 면접', '전문성 면접', '압박 면접'], context: '지원 내용 · 관련 경험 · 자기소개', contextPlaceholder: '면접관이 알아야 할 지원 내용을 입력해 주세요.' }
 };
 
 function showView(name) { Object.entries(views).forEach(([key, el]) => el.classList.toggle('hidden', key !== name)); window.scrollTo(0, 0); }
@@ -18,8 +18,11 @@ function updateTargetFields() {
   $('#organizationLabel').textContent = preset.organization; $('#company').placeholder = preset.organizationPlaceholder;
   $('#roleLabel').textContent = preset.role; $('#role').placeholder = preset.rolePlaceholder;
   $('#levelLabel').textContent = preset.level; $('#level').innerHTML = preset.levels.map(item => `<option>${item}</option>`).join('');
+  $('#interviewTypes').innerHTML = preset.interviewTypes.map((item, index) => `<label class="type-check"><input type="checkbox" name="interviewType" value="${item}" ${index === 0 ? 'checked' : ''}><span>${item}</span></label>`).join('');
   $('#contextLabel').textContent = preset.context; $('#context').placeholder = preset.contextPlaceholder;
 }
+
+function selectedInterviewTypes() { return [...document.querySelectorAll('input[name="interviewType"]:checked')].map(input => input.value); }
 
 function addPdfFiles(files, target) {
   const incoming = [...(files || [])]; if (!incoming.length) return;
@@ -127,21 +130,31 @@ async function getEvaluation(question, answer) {
   catch { toast('Gemini 키가 없어 데모 평가로 진행합니다.'); return demoEvaluation(answer); }
 }
 
+function beginInterviewSession() {
+  clearInterval(state.timer); speechSynthesis?.cancel();
+  state.recognition?.abort?.(); state.stream?.getTracks().forEach(track => track.stop());
+  state.questions = [...state.questionBank]; state.index = 0; state.history = []; state.seconds = Number(state.config.duration) * 60; state.currentQuestion = '';
+  $('#typePill').textContent = state.config.interviewTypes.join(' · '); $('#sessionTitle').textContent = `${state.config.company} · ${state.config.role}`;
+  $('#interviewerRole').textContent = `${state.config.interviewTypes.join(' + ')} Interviewer`; $('#topStatus').textContent = '면접 진행 중'; $('.live-dot').classList.add('active');
+  $('#cameraEmpty').classList.remove('hidden'); $('#cameraEmpty p').textContent = '카메라 준비 중';
+  showView('interview'); startCamera(); setupRecognition(); updateTimer(); state.timer = setInterval(updateTimer, 1000); renderQuestion();
+}
+
 $('#setupForm').addEventListener('submit', async e => {
   e.preventDefault();
   if (!value('context') && !state.pdfs.length) return toast('지원 내용을 입력하거나 지원서 PDF를 첨부해주세요.');
+  const interviewTypes = selectedInterviewTypes(); if (!interviewTypes.length) return toast('면접 종류를 하나 이상 선택해주세요.');
   const enterButton = $('#setupForm .primary-button'); enterButton.disabled = true; enterButton.querySelector('span').textContent = '면접 질문 준비 중…';
   const preset = targetPresets[value('targetType')];
-  state.config = { targetType: preset.name, company: value('company'), role: value('role'), duration: value('duration'), interviewType: value('interviewType'), format: value('format'), level: value('level'), difficulty: value('difficulty'), context: value('context'), pdfNames: state.pdfs.map(file => file.name), questionsPdfNames: state.questionsPdfs.map(file => file.name), expectedQuestions: cleanQuestions(value('questions')) };
+  state.config = { targetType: preset.name, company: value('company'), role: value('role'), duration: value('duration'), interviewTypes, interviewType: interviewTypes.join(', '), format: value('format'), level: value('level'), difficulty: value('difficulty'), context: value('context'), pdfNames: state.pdfs.map(file => file.name), questionsPdfNames: state.questionsPdfs.map(file => file.name), expectedQuestions: cleanQuestions(value('questions')) };
   let generatedQuestions = [];
   try { generatedQuestions = await generateQuestionsFromSources(); }
   catch (error) { toast(error.message); }
   state.questions = cleanQuestionList(generatedQuestions);
   if (!state.questions.length) state.questions = ['먼저 간단히 자기소개를 해주시겠어요?'];
+  state.questionBank = [...state.questions];
   state.config.expectedQuestions = [...state.questions];
-  state.index = 0; state.history = []; state.seconds = Number(state.config.duration) * 60;
-  $('#typePill').textContent = state.config.targetType; $('#sessionTitle').textContent = `${state.config.company} · ${state.config.role}`; $('#interviewerRole').textContent = `${state.config.interviewType} Interviewer`; $('#topStatus').textContent = '면접 진행 중'; $('.live-dot').classList.add('active');
-  showView('interview'); startCamera(); setupRecognition(); updateTimer(); state.timer = setInterval(updateTimer, 1000); renderQuestion();
+  beginInterviewSession();
   enterButton.disabled = false; enterButton.querySelector('span').textContent = '면접실 입장하기';
 });
 
@@ -174,7 +187,8 @@ function escapeHtml(text='') { const div = document.createElement('div'); div.te
 $('#finishButton').addEventListener('click', finishInterview);
 $('#cameraToggle').addEventListener('click', () => { const track = state.stream?.getVideoTracks()[0]; if (!track) return; track.enabled = !track.enabled; $('#cameraToggle').textContent = track.enabled ? '◉' : '×'; });
 $('#soundToggle').addEventListener('click', () => { state.speaking = !state.speaking; if (!state.speaking) speechSynthesis.cancel(); $('#soundToggle').style.opacity = state.speaking ? '1' : '.35'; toast(state.speaking ? '질문 음성을 켰어요.' : '질문 음성을 껐어요.'); });
-$('#restartButton').addEventListener('click', () => location.reload());
+$('#restartButton').addEventListener('click', beginInterviewSession);
+$('#editSetupButton').addEventListener('click', () => { $('#topStatus').textContent = '면접 준비'; $('.live-dot').classList.remove('active'); showView('setup'); });
 $('#downloadPdf').addEventListener('click', () => {
   const previousTitle = document.title;
   const safeCompany = state.config.company || '면접';
