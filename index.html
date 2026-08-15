@@ -25,7 +25,7 @@
     <section id="setupView" class="setup-shell">
       <div class="setup-intro">
         <p class="eyebrow">AI MOCK INTERVIEW</p>
-        <h1>준비한 만큼,<br><em>자신 있게.</em></h1>
+        <h1>준비한 만큼<br><em>자신 있게!</em></h1>
         <p>지원 내용을 바탕으로 실제처럼 묻고, 답변 속 강점과 빈틈을 짚어드립니다.</p>
         <div class="intro-meta"><span>01 맞춤 질문</span><span>02 실시간 음성</span><span>03 AI 피드백</span></div>
       </div>
@@ -40,11 +40,12 @@
         <div class="field-row three">
           <label><span>면접 시간 <small>분 단위</small></span><div class="number-input"><input id="duration" type="number" value="20" min="1" max="180" inputmode="numeric" required><b>분</b></div></label>
           <div class="selector-field"><span>면접 종류 <small>복수 선택 가능</small></span><div id="interviewTypes" class="interview-types" role="group" aria-label="면접 종류"></div></div>
-          <label><span>진행 형식</span><select id="format"><option>일대일</option><option>다대일</option><option>압박 면접</option><option>발표 면접</option></select></label>
+          <label><span>진행 인원</span><select id="format"><option>일대일</option><option>다대일</option></select></label>
         </div>
-        <div class="field-row">
+        <div class="field-row three">
           <label><span id="levelLabel">경력 수준</span><select id="level"><option>신입</option><option>1~3년</option><option>4~7년</option><option>8년 이상</option></select></label>
           <label><span>난이도</span><select id="difficulty"><option>편안하게</option><option selected>실전처럼</option><option>날카롭게</option></select></label>
+          <div class="selector-field"><span>추가 면접 형식 <small>복수 선택 가능</small></span><div id="interviewStyles" class="interview-types"><label class="type-check"><input type="checkbox" name="interviewStyle" value="압박 면접"><span>압박 면접</span></label><label class="type-check"><input type="checkbox" name="interviewStyle" value="발표 면접"><span>발표 면접</span></label></div></div>
         </div>
         <div class="application-source">
           <div class="source-heading"><span id="contextLabel">지원 내용 · 채용 공고 · 자기소개 요약</span><small>직접 입력하거나 PDF를 첨부하세요</small></div>
@@ -77,9 +78,9 @@
       <div class="session-bar"><div><span class="pill" id="typePill">직무 면접</span><strong id="sessionTitle">면접</strong></div><div class="timer-wrap"><span>남은 시간</span><b id="timer">20:00</b></div></div>
       <div class="stage-grid">
         <article class="interviewer-panel">
-          <img src="assets/interviewer.png" alt="면접관" />
+          <img id="interviewerImage" src="assets/interviewer.png" alt="면접관" />
           <div class="image-shade"></div>
-          <div class="interviewer-label"><span>INTERVIEWER</span><strong>김현우 면접관</strong><small id="interviewerRole">Talent Interviewer</small></div>
+          <div class="interviewer-label"><span id="interviewerKicker">INTERVIEWER</span><strong id="interviewerName">김현우 면접관</strong><small id="interviewerRole">Talent Interviewer</small></div>
           <div class="speaking-bars" id="speakingBars"><i></i><i></i><i></i><i></i></div>
         </article>
         <aside class="candidate-panel">

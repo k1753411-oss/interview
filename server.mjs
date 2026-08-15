@@ -47,7 +47,9 @@ function buildPrompt(data) {
 [면접 설정]
 면접 대상: ${data.targetType || '기업'}
 지원 기관/분야: ${data.company || '-'} / ${data.role || '-'}
-면접 유형/형식: ${data.interviewType || '-'} / ${data.format || '-'}
+면접 유형: ${data.interviewType || '-'}
+진행 인원: ${data.format || '-'}
+추가 면접 형식: ${data.interviewStyle || '없음'}
 경력 수준: ${data.level || '-'}
 직접 입력한 지원 내용: ${data.context || ((data.pdfNames || []).length ? `첨부 PDF(${data.pdfNames.join(', ')})를 우선 참고` : '-')}
 사용자가 준비한 예상 질문: ${(data.expectedQuestions || []).join(' | ') || '-'}
@@ -119,7 +121,9 @@ ${applicationPdfs.length ? '지원서 PDF들은 지원자의 실제 제출 자�
 [면접 맥락]
 면접 대상: ${data.targetType || '-'}
 기관/분야: ${data.company || '-'} / ${data.role || '-'}
-면접 유형/형식: ${data.interviewType || '-'} / ${data.format || '-'}
+면접 유형: ${data.interviewType || '-'}
+진행 인원: ${data.format || '-'}
+추가 면접 형식: ${data.interviewStyle || '없음'}
 지원 단계: ${data.level || '-'}
 직접 입력한 지원 내용: ${data.context || '-'}
 사용자가 입력한 예상 질문 참고 자료:
@@ -156,7 +160,7 @@ ${(data.expectedQuestions || []).map((question, index) => `${index + 1}. ${quest
       })
     });
     const payload = await response.json();
-    if (!response.ok) throw new Error(payload?.error?.message || '예상 질문 PDF 분석에 실패했습니다.');
+    if (!response.ok) return json(res, response.status, { error: payload?.error?.message || '예상 질문 자료 분석에 실패했습니다.' });
     const text = payload?.candidates?.[0]?.content?.parts?.map(part => part.text || '').join('');
     const parsed = JSON.parse(text);
     json(res, 200, { briefing: parsed.briefing, questions: (parsed.questions || []).filter(Boolean) });
@@ -185,7 +189,7 @@ async function evaluate(req, res) {
       })
     });
     const payload = await response.json();
-    if (!response.ok) throw new Error(payload?.error?.message || 'Gemini 요청에 실패했습니다.');
+    if (!response.ok) return json(res, response.status, { error: payload?.error?.message || 'Gemini 요청에 실패했습니다.' });
     const text = payload?.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('');
     json(res, 200, JSON.parse(text));
   } catch (error) {
