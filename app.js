@@ -132,14 +132,16 @@ async function getEvaluation(question, answer) {
     try {
       const res = await fetch('/api/evaluate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       const payload = await res.json();
-      if (!res.ok) { const error = new Error(payload.error || `Gemini 요청 실패 (${res.status})`); error.status = res.status; throw error; }
+      if (!res.ok) { const error = new Error(payload.error || `Gemini 요청 실패 (${res.status})`); error.status = res.status; error.retryDelay = payload.retryDelay; throw error; }
       return payload;
     } catch (error) {
       lastError = error;
       const retryable = !error.status || error.status === 429 || error.status >= 500;
       if (!retryable || attempt === 2) break;
-      toast(`Gemini 응답이 지연되어 재시도 중입니다 (${attempt + 1}/2)…`);
-      await new Promise(resolve => setTimeout(resolve, attempt === 0 ? 800 : 1800));
+      const suggestedSeconds = Number.parseFloat(String(error.retryDelay || '').replace('s', ''));
+      const waitMs = Number.isFinite(suggestedSeconds) ? Math.min(30000, Math.max(3000, suggestedSeconds * 1000)) : (attempt === 0 ? 10000 : 20000);
+      toast(`요청 한도가 잠시 찼습니다. ${Math.ceil(waitMs / 1000)}초 후 재시도합니다 (${attempt + 1}/2)…`);
+      await new Promise(resolve => setTimeout(resolve, waitMs));
     }
   }
   const message = /quota|429|resource_exhausted/i.test(lastError?.message || '') ? 'Gemini 사용 한도에 도달해 이번 답변만 데모 평가로 진행합니다.' : `Gemini 연결 오류로 이번 답변만 데모 평가합니다: ${lastError?.message || '알 수 없는 오류'}`;

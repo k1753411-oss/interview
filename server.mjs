@@ -23,7 +23,8 @@ try {
 }
 
 const port = Number(process.env.PORT || 4173);
-const model = process.env.GEMINI_MODEL || 'gemini-3.6-flash';
+const model = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
+const analysisModel = process.env.GEMINI_ANALYSIS_MODEL || 'gemini-3.5-flash-lite';
 const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.svg': 'image/svg+xml' };
 
 async function parseBody(req) {
@@ -141,7 +142,7 @@ ${(data.expectedQuestions || []).map((question, index) => `${index + 1}. ${quest
 - 답변에 따라 이어질 꼬리질문은 면접 진행 중 별도로 생성되므로, 여기서는 서로 중복되지 않는 핵심 질문만 만드세요.
 - 표지, 제목, "예상 질문", 카테고리명, 목차는 질문으로 반환하지 마세요.
 - 한국어 구어체 면접 질문 8~15개를 반환하세요.`;
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(analysisModel)}:generateContent`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-goog-api-key': process.env.GEMINI_API_KEY },
       body: JSON.stringify({
@@ -156,11 +157,14 @@ ${(data.expectedQuestions || []).map((question, index) => `${index + 1}. ${quest
             { inlineData: { mimeType: 'application/pdf', data: pdfData } }
           ])
         ] }],
-        generationConfig: { responseMimeType: 'application/json', responseSchema: questionsSchema, temperature: 0.75 }
+        generationConfig: { responseMimeType: 'application/json', responseSchema: questionsSchema, maxOutputTokens: 6000, thinkingConfig: { thinkingLevel: 'minimal' } }
       })
     });
     const payload = await response.json();
-    if (!response.ok) return json(res, response.status, { error: payload?.error?.message || '예상 질문 자료 분석에 실패했습니다.' });
+    if (!response.ok) {
+      const retryDelay = payload?.error?.details?.find(detail => String(detail?.['@type']).includes('RetryInfo'))?.retryDelay || '';
+      return json(res, response.status, { error: payload?.error?.message || '예상 질문 자료 분석에 실패했습니다.', retryDelay });
+    }
     const text = payload?.candidates?.[0]?.content?.parts?.map(part => part.text || '').join('');
     const parsed = JSON.parse(text);
     json(res, 200, { briefing: parsed.briefing, questions: (parsed.questions || []).filter(Boolean) });
@@ -185,11 +189,14 @@ async function evaluate(req, res) {
             { inlineData: { mimeType: 'application/pdf', data: pdfData } }
           ])
         ] }],
-        generationConfig: { responseMimeType: 'application/json', responseSchema: schema, temperature: 0.55 }
+        generationConfig: { responseMimeType: 'application/json', responseSchema: schema, maxOutputTokens: 2500, thinkingConfig: { thinkingLevel: 'minimal' } }
       })
     });
     const payload = await response.json();
-    if (!response.ok) return json(res, response.status, { error: payload?.error?.message || 'Gemini 요청에 실패했습니다.' });
+    if (!response.ok) {
+      const retryDelay = payload?.error?.details?.find(detail => String(detail?.['@type']).includes('RetryInfo'))?.retryDelay || '';
+      return json(res, response.status, { error: payload?.error?.message || 'Gemini 요청에 실패했습니다.', retryDelay });
+    }
     const text = payload?.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('');
     json(res, 200, JSON.parse(text));
   } catch (error) {
@@ -200,7 +207,7 @@ async function evaluate(req, res) {
 const server = http.createServer(async (req, res) => {
   if (req.url === '/api/questions' && req.method === 'POST') return extractQuestions(req, res);
   if (req.url === '/api/evaluate' && req.method === 'POST') return evaluate(req, res);
-  if (req.url === '/api/status') return json(res, 200, { gemini: Boolean(process.env.GEMINI_API_KEY), model });
+  if (req.url === '/api/status') return json(res, 200, { gemini: Boolean(process.env.GEMINI_API_KEY), model, analysisModel });
   try {
     const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
     const wanted = pathname === '/' ? 'index.html' : pathname.slice(1);
